@@ -7,12 +7,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -29,7 +29,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class PlayScreen implements Screen {
 	
 	MyGdxGame game;
-	
+	private TextureAtlas atlas;
 	
 	private OrthographicCamera gamecam; //caméra du jeu
 	private Viewport gameP;
@@ -48,6 +48,7 @@ public class PlayScreen implements Screen {
 	
 	//constructeur
 	public PlayScreen(MyGdxGame game) {
+		atlas = new TextureAtlas("C:/Users/maxen/Desktop/404NotFound-deplacement(1)/404NotFound-deplacement/ProjetJava/core/assets/Mario_and_Enemies.pack");
 		this.game = game;
 		//cree la caméra qui va suivre mario
 		gamecam = new OrthographicCamera();
@@ -58,7 +59,7 @@ public class PlayScreen implements Screen {
 		// TODO Auto-generated constructor stub
 		//génère la map et crée le rendu de la map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("C:/Users/maxen/Downloads/404NotFound-deplacement(1)/404NotFound-deplacement/ProjetJava/core/assets/LevelB.tmx");
+		map = mapLoader.load("C:/Users/maxen/Desktop/404NotFound-deplacement(1)/404NotFound-deplacement/ProjetJava/core/assets/level1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM ) ;
 		//centre la caméra au début du jeu au niveau du viewport
 		gamecam.position.set(gameP.getWorldWidth() / 2 , gameP.getWorldHeight() / 2 , 0);
@@ -66,68 +67,14 @@ public class PlayScreen implements Screen {
 		world = new World(new Vector2(0,-10), true); //  gravité 
 		bdb = new Box2DDebugRenderer();
 		
-		BodyDef bd = new BodyDef();
-		PolygonShape shp = new PolygonShape();
-		FixtureDef fd = new FixtureDef();
-		Body body;
+		new Bworld(world, map);
 		
+		player = new Mario(world, this);
 		
-		
-		player = new Mario(world);
-		
-		//cree le sol, les corps
-		for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//box
-		for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//piece
-		for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//pont
-		for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		
+	}
+	
+	public TextureAtlas getAtlas() {
+		return atlas;
 	}
 
 	@Override
@@ -148,9 +95,8 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		handleInput(dt);
 		world.step(1/90f, 6, 2);
-		
+		player.update(dt);
 		gamecam.position.x = player.bdy.getPosition().x;
-		gamecam.position.y = player.bdy.getPosition().y;
 		gamecam.update();
 		renderer.setView(gamecam);
 	}
@@ -168,6 +114,11 @@ public class PlayScreen implements Screen {
 		renderer.render();
 		
 		bdb.render(world, gamecam.combined);
+		
+		game.batch.setProjectionMatrix(gamecam.combined);
+		game.batch.begin();
+		player.draw(game.batch);
+		game.batch.end();
 		
 		game.batch.setProjectionMatrix(gs.stage.getCamera().combined);//ce qui va être afficher avec la caméra
 		gs.stage.draw(); //ce qui va déssiner à l'écran ce qui compose notre stage
@@ -202,7 +153,15 @@ public class PlayScreen implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
+		map.dispose();
+		renderer.dispose();
+		world.dispose();
+		bdb.dispose();
+		gs.dispose();
 
 	}
+	//public Game_specifications getGame_specifications() {
+		//return Game_specifications;
+	//}
 
 }
