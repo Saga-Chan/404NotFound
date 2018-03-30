@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.MyGdxGame;
 
 
-public class Game_specifications {
+public class Game_specifications implements Disposable {
 	
 	public Stage stage; // gère le jeu
 	private Viewport viewport; // gère les différentes plateformes
@@ -63,6 +64,13 @@ public class Game_specifications {
 		//on ajoute la table au "stage"
 		stage.addActor(table);
 		
+		
+	}
+
+	//@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		stage.dispose();
 		
 	}
 

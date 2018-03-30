@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -28,7 +29,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class PlayScreen implements Screen {
 	
 	MyGdxGame game;
-	
+	private TextureAtlas atlas;
 	
 	private OrthographicCamera gamecam; //caméra du jeu
 	private Viewport gameP;
@@ -47,6 +48,7 @@ public class PlayScreen implements Screen {
 	
 	//constructeur
 	public PlayScreen(MyGdxGame game) {
+		atlas = new TextureAtlas("Mario_and_Enemies.pack");
 		this.game = game;
 		//cree la caméra qui va suivre mario
 		gamecam = new OrthographicCamera();
@@ -65,68 +67,14 @@ public class PlayScreen implements Screen {
 		world = new World(new Vector2(0,-10), true); //  gravité 
 		bdb = new Box2DDebugRenderer();
 		
-		BodyDef bd = new BodyDef();
-		PolygonShape shp = new PolygonShape();
-		FixtureDef fd = new FixtureDef();
-		Body body;
+		new Bworld(world, map);
 		
+		player = new Mario(world, this);
 		
-		
-		player = new Mario(world);
-		
-		//cree le sol, les corps
-		for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//tuyaux
-		for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//blocs
-		for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		//pièces
-		for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rt = ((RectangleMapObject) object).getRectangle();
-			
-			bd.type = BodyDef.BodyType.StaticBody;
-			bd.position.set((rt.getX() + rt.getWidth()/2)/MyGdxGame.PPM, (rt.getY() + rt.getHeight()/2)/MyGdxGame.PPM);
-			
-			body = world.createBody(bd);
-			
-			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
-			fd.shape = shp;
-			body.createFixture(fd);
-		}
-		
+	}
+	
+	public TextureAtlas getAtlas() {
+		return atlas;
 	}
 
 	@Override
@@ -147,7 +95,7 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		handleInput(dt);
 		world.step(1/90f, 6, 2);
-		
+		player.update(dt);
 		gamecam.position.x = player.bdy.getPosition().x;
 		gamecam.update();
 		renderer.setView(gamecam);
@@ -166,6 +114,11 @@ public class PlayScreen implements Screen {
 		renderer.render();
 		
 		bdb.render(world, gamecam.combined);
+		
+		game.batch.setProjectionMatrix(gamecam.combined);
+		game.batch.begin();
+		player.draw(game.batch);
+		game.batch.end();
 		
 		game.batch.setProjectionMatrix(gs.stage.getCamera().combined);//ce qui va être afficher avec la caméra
 		gs.stage.draw(); //ce qui va déssiner à l'écran ce qui compose notre stage
@@ -200,7 +153,15 @@ public class PlayScreen implements Screen {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
+		map.dispose();
+		renderer.dispose();
+		world.dispose();
+		bdb.dispose();
+		gs.dispose();
 
 	}
+	//public Game_specifications getGame_specifications() {
+		//return Game_specifications;
+	//}
 
 }
