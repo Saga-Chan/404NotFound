@@ -59,7 +59,7 @@ public class PlayScreen implements Screen {
 		// TODO Auto-generated constructor stub
 		//génère la map et crée le rendu de la map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("C:/Users/maxen/Desktop/404NotFound-deplacement(1)/404NotFound-deplacement/ProjetJava/core/assets/level1.tmx");
+		map = mapLoader.load("C:/Users/maxen/Desktop/404NotFound-deplacement(1)/404NotFound-deplacement/ProjetJava/core/assets/LevelA.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM ) ;
 		//centre la caméra au début du jeu au niveau du viewport
 		gamecam.position.set(gameP.getWorldWidth() / 2 , gameP.getWorldHeight() / 2 , 0);
@@ -97,6 +97,7 @@ public class PlayScreen implements Screen {
 		world.step(1/90f, 6, 2);
 		player.update(dt);
 		gamecam.position.x = player.bdy.getPosition().x;
+		gamecam.position.y = player.bdy.getPosition().y;
 		gamecam.update();
 		renderer.setView(gamecam);
 	}

@@ -99,7 +99,7 @@ public class Mario extends Sprite{
 		// TODO Auto-generated method stub
 		BodyDef bd = new BodyDef();
 		//position de mario
-		bd.position.set(32/ MyGdxGame.PPM,32/ MyGdxGame.PPM);
+		bd.position.set(200/ MyGdxGame.PPM,64/ MyGdxGame.PPM);
 		//type d'objet 
 		bd.type = BodyDef.BodyType.DynamicBody;
 		//on crée l'objet mario dans le monde

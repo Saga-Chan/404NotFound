@@ -23,7 +23,7 @@ public class Bworld {
 		
 		
 		//cree le sol, les corps
-		for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+		for(MapObject object : map.getLayers().get(0).getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rt = ((RectangleMapObject) object).getRectangle();
 			
 			bd.type = BodyDef.BodyType.StaticBody;
@@ -36,7 +36,7 @@ public class Bworld {
 			body.createFixture(fd);
 		}
 		//tuyaux
-		for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+		/*for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rt = ((RectangleMapObject) object).getRectangle();
 			
 			bd.type = BodyDef.BodyType.StaticBody;
@@ -47,17 +47,17 @@ public class Bworld {
 			shp.setAsBox(rt.getWidth()/2/MyGdxGame.PPM,rt.getHeight()/2/MyGdxGame.PPM);
 			fd.shape = shp;
 			body.createFixture(fd);
-		}
+		}*/
 		//blocs
-		for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+		for(MapObject object : map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rt = ((RectangleMapObject) object).getRectangle();
 			new Brick(world,map,rt);
 		}
 		//pièces
-		for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+		/*for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rt = ((RectangleMapObject) object).getRectangle();
 			new Coin(world, map, rt);
-		}
+		}*/
 		
 	}
 
