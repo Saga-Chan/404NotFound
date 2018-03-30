@@ -84,12 +84,12 @@ public class PlayScreen implements Screen {
 	}
 	//action de mario quand une touche est entrée par l'utilisateur
 	public void handleInput(float dt) {
-		if(Gdx.input.isKeyJustPressed(Input.Keys.UP))
-			player.bdy.applyLinearImpulse(new Vector2(0,4f), player.bdy.getWorldCenter(), true);
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.bdy.getLinearVelocity().x <= 2)
-			player.bdy.applyLinearImpulse(new Vector2(0.1f,0),player.bdy.getWorldCenter(), true);
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.bdy.getLinearVelocity().x >= -2)
-			player.bdy.applyLinearImpulse(new Vector2(-0.1f,0),player.bdy.getWorldCenter(), true);	
+		if(Gdx.input.isKeyJustPressed(Input.Keys.UP) && (player.isRunning()==true || player.isStanding()==true))
+			player.bdy.applyLinearImpulse(new Vector2(0,3.2f), player.bdy.getWorldCenter(), true);
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.bdy.getLinearVelocity().x <= 2 && player.isJumping()==false)
+			player.bdy.applyLinearImpulse(new Vector2(0.06f,0),player.bdy.getWorldCenter(), true);
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.bdy.getLinearVelocity().x >= -2 && player.isJumping()==false)
+			player.bdy.applyLinearImpulse(new Vector2(-0.06f,0),player.bdy.getWorldCenter(), true);	
 	}
 	
 	public void update(float dt) {
