@@ -3,6 +3,7 @@ Difficultés rencontrées:
 - Configuration de l'environnement: avoir une version de Eclipse avec le Buildship Gradle pour importer des projet Libgdx
 - Lier les calques d'object de Tilled, logiciel pour faire la map, et le code dans le projet
 - Gestion de l'equation du saut selon les etats du perso ( retour au moteur mechanique de depart avec amelioration)
+- Utilisation de GIT, nous n'avions pas tous l'habitude et la connaissance de GIT
 
 
 Maxime : 
